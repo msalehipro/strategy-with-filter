@@ -5,23 +5,19 @@ namespace App\Services\PriceAdjustment;
 use App\Models\Lodging;
 use App\Services\PriceAdjustment\Contracts\AdjustmentFilterInterface;
 use App\Services\PriceAdjustment\Contracts\PriceAdjustmentStrategyInterface;
+use Illuminate\Database\Eloquent\Builder;
 
 class PriceAdjustmentService
 {
-    private array $filters;
-    private array $strategies;
-
-    public function __construct(array $filters, array $strategies)
+    public function __construct(private readonly array $filters, private readonly array $strategies)
     {
-        $this->filters = $filters;
-        $this->strategies = $strategies;
     }
 
     public function adjustPrices(): void
     {
         $lodgings = $this->applyFilters(Lodging::query())->get();
 
-        $lodgings->each(function ($lodging) {
+        $lodgings->each(function (Lodging $lodging) {
             foreach ($this->strategies as $strategy) {
                 if ($strategy instanceof PriceAdjustmentStrategyInterface) {
                     $strategy->apply($lodging);
@@ -30,7 +26,7 @@ class PriceAdjustmentService
         });
     }
 
-    private function applyFilters($query)
+    private function applyFilters(Builder $query)
     {
         foreach ($this->filters as $filter) {
             if ($filter instanceof AdjustmentFilterInterface) {
