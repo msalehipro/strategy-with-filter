@@ -8,11 +8,9 @@ use Illuminate\Database\Eloquent\Builder;
 class CityFilter implements AdjustmentFilterInterface
 {
 
-    private int $cityId;
 
-    public function __construct(int $cityId)
+    public function __construct(private readonly int $cityId)
     {
-        $this->cityId = $cityId;
     }
 
     public function apply(Builder $query): void

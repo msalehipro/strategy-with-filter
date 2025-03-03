@@ -4,15 +4,18 @@ A real-world example to use strategy design pattern with filtering in PHP/Larave
 # How to use
 
 ```php
-$editType = 'increase';
+// can be positive or negative
 $amount = 100000;
+
 $priceTypes = [
-    SeasonPriceTypeEnum::WEEKEND->value,
+    SeasonPriceTypeEnum::WEEKEND,
 ];
+
 $seasons = [
     SeasonEnum::Spring,
     SeasonEnum::Summer,
 ];
+
 $filters = [
     new ProvinceFilter(89),
     new CityFilter(332),
@@ -21,9 +24,10 @@ $filters = [
 ];
 
 $strategies = [
-    new NoroozPriceStrategy($editType, $amount),
-    new SeasonPriceStrategy($editType, $amount, $priceTypes, $seasons),
+    new NoroozPriceStrategy($amount),
+    new SeasonPriceStrategy($amount, $priceTypes, $seasons),
 ];
+
 $adjust = new PriceAdjustmentService($filters, $strategies);
 
 $adjust->adjustPrices();
